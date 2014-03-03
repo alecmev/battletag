@@ -1,0 +1,44 @@
+#battletag-popover {
+    background: #FDFDFD;
+    display: none;
+    min-width: 236px;
+    position: absolute;
+    z-index: 3000;
+    -webkit-filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+    -moz-filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+    -o-filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+}
+
+#battletag-popover > div {
+    background: #0A0E14;
+    border-style: solid;
+    border-width: 1px;
+    min-height: 12px;
+}
+
+#battletag-popover > div > div li a {
+    border-top: 1px solid #3C4249;
+    color: #F7DA8D;
+    display: block;
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 34px;
+    padding: 0 16px;
+    text-decoration: none;
+}
+
+#battletag-popover > div > div li:first-child a {
+    border-top: 0;
+}
+
+#battletag-popover > div > div li a:hover {
+    background-color: #21252B;
+}
+
+#battletag-popover > div > div li a font {
+    color: #FFF;
+    padding-right: 6px;
+    text-transform: uppercase;
+}

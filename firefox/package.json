@@ -1,0 +1,9 @@
+{
+    "id": "battletag@jeremejevs.com",
+
+    "author": "Olegs Jeremejevs",
+    "homepage": "http://jeremejevs.com/",
+    "icon": "data/icon-48.png",
+    "icon64": "data/icon-64.png",
+    "license": "MIT"
+}
