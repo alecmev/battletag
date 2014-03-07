@@ -1,10 +1,14 @@
 var battletag = {};
 
-$('#base-container').append(
-    '<div id="battletag-popover"><div><div><ul></ul></div></div></div>'
+battletag.popoverList = $('<ul>');
+battletag.popover = $('<div>', { id: 'battletag-popover' }).append(
+    $('<div>').append(
+        $('<div>').append(
+            battletag.popoverList
+        )
+    )
 );
-battletag.popover = $('#battletag-popover');
-battletag.popoverList = battletag.popover.find('ul');
+$('#base-container').append(battletag.popover);
 battletag.popoverNeeded = false;
 
 battletag.showPopover = function(button) {
@@ -14,7 +18,7 @@ battletag.showPopover = function(button) {
 
     battletag.button = button;
     battletag.popoverNeeded = true;
-    battletag.popoverList.html('');
+    battletag.popoverList.empty();
 
     $.ajax({
         url: '/bf4/platoons/',
@@ -27,23 +31,36 @@ battletag.showPopover = function(button) {
             }
 
             if (!Object.keys(data.context.myclubs).length) {
-                battletag.popoverList.html(
-                    '<li><a href="/bf4/platoons/">YOU HAVE NO PLATOONS</a></li>'
+                battletag.popoverList.append(
+                    $('<li>').append(
+                        $('<a>', {
+                            'href': '/bf4/platoons/',
+                            'text': 'YOU HAVE NO PLATOONS'
+                        })
+                    )
                 );
                 return;
             }
 
-            var tmpClubs = '';
             for (var tmpClubId in data.context.myclubs) {
-                tmpClubs += 
-                    '<li><a href="javascript:;" ' +
-                    'data-url="/bf4/platoons/setActive/' + tmpClubId +'/"' +
-                    '><font>[' +
-                    data.context.myclubs[tmpClubId].tag + ']</font>' +
-                    data.context.myclubs[tmpClubId].name + '</a></li>';
+                battletag.popoverList.append(
+                    $('<li>').append(
+                        $('<a>', {
+                            'href': 'javascript:;',
+                            'data-url':
+                                '/bf4/platoons/setActive/' + tmpClubId + '/'
+                        }).append(
+                            $('<font>', {
+                                'text': '[' +
+                                        data.context.myclubs[tmpClubId].tag +
+                                    ']'
+                            })
+                        ).append(
+                            data.context.myclubs[tmpClubId].name
+                        )
+                    )
+                );
             }
-
-            battletag.popoverList.html(tmpClubs);
         }
     });
 
