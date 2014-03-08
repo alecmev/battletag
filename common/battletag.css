@@ -11,14 +11,24 @@
 }
 
 #battletag-popover > div {
-    background: #0A0E14;
+    /*background: #0A0E14;*/
+    background: #3C4249;
     border-style: solid;
     border-width: 1px;
     min-height: 12px;
 }
 
-#battletag-popover > div > div li a {
+/*#battletag-popover li {
     border-top: 1px solid #3C4249;
+}
+
+#battletag-popover li:first-child {
+    border: 0;
+}*/
+
+#battletag-popover a {
+    background: #0A0E14;
+    border: 0;
     color: #F7DA8D;
     display: block;
     font-family: Arial, sans-serif;
@@ -29,15 +39,37 @@
     text-decoration: none;
 }
 
-#battletag-popover > div > div li:first-child a {
-    border-top: 0;
-}
-
-#battletag-popover > div > div li a:hover {
+#battletag-popover a:hover {
     background-color: #21252B;
 }
 
-#battletag-popover > div > div li a font {
+#battletag-popover a.ui-sortable-placeholder {
+    visibility: visible !important;
+}
+
+#battletag-popover a:not(.ui-sortable-helper) + a:not(.ui-sortable-helper),
+#battletag-popover a + a.ui-sortable-helper + a {
+    margin-top: 1px
+}
+
+#battletag-popover a > div {
+    float: left;
+    margin-right: 6px;
+    width: 3px;
+}
+
+#battletag-popover a > div > div {
+    background: #AFAFAF;
+    height: 2px;
+    margin-top: 1px;
+    width: 2px;
+}
+
+#battletag-popover a > div > div:first-child {
+    margin-top: 13px;
+}
+
+#battletag-popover a > font {
     color: #FFF;
     padding-right: 6px;
     text-transform: uppercase;
