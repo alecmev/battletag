@@ -43,12 +43,23 @@ with open(btc + '/inject.js', 'w') as tmpOut:
     tmpOut.write(inject
         .replace('@@CSS@@', 'chrome.extension.getURL("battletag.css")')
         .replace('@@JS@@', 'chrome.extension.getURL("battletag.js")')
+        .replace('@@CHECK@@', '')
     )
 
 with open(btfd + '/inject.js', 'w') as tmpOut:
     tmpOut.write(inject
         .replace('@@CSS@@', 'self.options.css')
         .replace('@@JS@@', 'self.options.js')
+        .replace(
+            '@@CHECK@@',
+            '\n' +
+            '    if (\n' +
+            '        \'resource://battletag-at-jeremejevs-dot-com/\' !=\n' +
+            '        jshref.substring(0, 43)\n' +
+            '    ) {\n' +
+            '        return;\n' +
+            '    }\n'
+        )
     )
 
 shutil.copy('chrome/background.js', btc)

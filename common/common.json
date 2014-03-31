@@ -1,6 +1,6 @@
 {
     "name": "Battletag for Battlelog™",
     "short_name": "Battletag",
-    "description": "Lets you select the platoon you want to represent before joining a Battlefield 4™ server, in just one extra click.",
-    "version": "0.1.1"
+    "description": "Displays your current platoon on every server join button, and lets you select another one, with just one right click.",
+    "version": "1.0.0"
 }

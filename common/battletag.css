@@ -1,76 +1,74 @@
-#battletag-popover {
-    background: #FDFDFD;
-    display: none;
-    min-width: 236px;
-    position: absolute;
-    z-index: 3000;
-    -webkit-filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
-    -moz-filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
-    -o-filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
-    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
-}
-
-#battletag-popover > div {
-    /*background: #0A0E14;*/
+.battletag-popover {
     background: #3C4249;
     border-style: solid;
     border-width: 1px;
-    min-height: 12px;
-}
-
-/*#battletag-popover li {
-    border-top: 1px solid #3C4249;
-}
-
-#battletag-popover li:first-child {
-    border: 0;
-}*/
-
-#battletag-popover a {
-    background: #0A0E14;
-    border: 0;
-    color: #F7DA8D;
-    display: block;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    display: none;
     font-family: Arial, sans-serif;
     font-size: 12px;
     font-weight: bold;
-    line-height: 34px;
-    padding: 0 16px;
-    text-decoration: none;
+    position: absolute;
+    white-space: nowrap;
+    z-index: 10000;
 }
 
-#battletag-popover a:hover {
+.battletag-loading {
+    padding: 3px 4px 0 2px;
+}
+
+.battletag-preview {
+    color: #FFFFFF !important;
+    cursor: pointer;
+    line-height: 24px;
+    min-width: inherit;
+    padding: 0 8px;
+}
+
+.battletag-select > a {
+    background: #0A0E14;
+    border: 0;
+    color: #F7DA8D !important;
+    display: block;
+    line-height: 34px;
+    padding: 0 14px 0 12px;
+    text-decoration: none !important;
+}
+
+.battletag-select > a:hover {
     background-color: #21252B;
 }
 
-#battletag-popover a.ui-sortable-placeholder {
+.battletag-select > a.ui-sortable-placeholder {
     visibility: visible !important;
 }
 
-#battletag-popover a:not(.ui-sortable-helper) + a:not(.ui-sortable-helper),
-#battletag-popover a + a.ui-sortable-helper + a {
+.battletag-select > a:not(.ui-sortable-helper) + a:not(.ui-sortable-helper),
+.battletag-select > a + a.ui-sortable-helper + a {
     margin-top: 1px
 }
 
-#battletag-popover a > div {
+.battletag-select > a > div {
     float: left;
     margin-right: 6px;
     width: 3px;
 }
 
-#battletag-popover a > div > div {
+.battletag-select > a > div > div {
     background: #AFAFAF;
     height: 2px;
     margin-top: 1px;
     width: 2px;
 }
 
-#battletag-popover a > div > div:first-child {
+.battletag-select > a > div > div:first-child {
     margin-top: 13px;
 }
 
-#battletag-popover a > font {
-    color: #FFF;
+.battletag-select > a > font {
+    color: #FFFFFF !important;
     padding-right: 6px;
-    text-transform: uppercase;
+}
+
+.map-thumb .quick-join {
+    z-index: inherit !important;
 }
