@@ -1,6 +1,6 @@
 {
     "name": "Battletag for Battlelog™",
     "short_name": "Battletag",
-    "description": "Displays your current platoon on every server join button, and lets you select another one, with just one right click.",
-    "version": "1.0.0"
+    "description": "Adds a right click menu to all server join buttons, where you can either type in a new tag or select one of the platoons you're in.",
+    "version": "1.1.0"
 }

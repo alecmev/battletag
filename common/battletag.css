@@ -17,7 +17,7 @@
 }
 
 .battletag-preview {
-    color: #FFFFFF !important;
+    color: #FFFFFF;
     cursor: pointer;
     line-height: 24px;
     min-width: inherit;
@@ -25,48 +25,88 @@
 }
 
 .battletag-select > a {
-    background: #0A0E14;
-    border: 0;
     color: #F7DA8D !important;
-    display: block;
     line-height: 34px;
+    margin-top: 1px;
     padding: 0 14px 0 12px;
+}
+
+.battletag-select > a font {
+    color: #FFFFFF;
+    padding-right: 6px;
+}
+
+.battletag-select a {
+    display: block;
     text-decoration: none !important;
 }
 
-.battletag-select > a:hover {
+.battletag-select a:hover {
     background-color: #21252B;
 }
 
-.battletag-select > a.ui-sortable-placeholder {
-    visibility: visible !important;
+.battletag-select table {
+    width: 100%;
 }
 
-.battletag-select > a:not(.ui-sortable-helper) + a:not(.ui-sortable-helper),
-.battletag-select > a + a.ui-sortable-helper + a {
-    margin-top: 1px
+.battletag-select td {
+    overflow:hidden;
 }
 
-.battletag-select > a > div {
-    float: left;
-    margin-right: 6px;
-    width: 3px;
+.battletag-select td:not(:first-of-type) {
+    width: 34px;
 }
 
-.battletag-select > a > div > div {
-    background: #AFAFAF;
-    height: 2px;
-    margin-top: 1px;
-    width: 2px;
+.battletag-select input {
+    border: 0;
+    color: #FFFFFF;
+    display: block !important;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    font-weight: normal;
+    height: 34px;
+    line-height: 13px;
+    min-width: 128px;
+    padding: 0 0 0 12px;
+    width: 100%;
 }
 
-.battletag-select > a > div > div:first-child {
-    margin-top: 13px;
+.battletag-select table a {
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: normal;
+    height: 34px;
+    line-height: 30px;
+    margin-left: 1px;
+    text-align: center;
 }
 
-.battletag-select > a > font {
-    color: #FFFFFF !important;
-    padding-right: 6px;
+.battletag-select table a:first-of-type {
+    font-variant: small-caps;
+}
+
+.battletag-select a,
+.battletag-select input {
+    background-color: #0A0E14;
+    outline: none;
+}
+
+.battletag-active {
+    color: #666666 !important;
+    font-weight: normal;
+    padding-left: 6px;
+}
+
+.battletag-select input::-webkit-input-placeholder {
+    color: #666666;
+}
+
+.battletag-select input:-moz-placeholder {
+    color: #666666;
+}
+
+.battletag-select input::-moz-placeholder {
+    color: #666666;
 }
 
 .map-thumb .quick-join {

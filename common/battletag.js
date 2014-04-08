@@ -1,5 +1,61 @@
 var battletag = {};
 
+battletag.roots = {
+    'main': '#base-container',
+    'header': '.dropdown-content[data-for=multiplayer]',
+    'friends': '#comcenter-friends',
+    'chats': '#comcenter-chats'
+};
+
+battletag.clubs = {};
+battletag.clubsActive = null;
+battletag.clubsChanged = true;
+battletag.clubsJSON = null;
+battletag.clubsLoading = true;
+battletag.personaId = S.globalContext.staticContext.activePersona.personaId;
+battletag.retryTime = 5000;
+battletag.tag = null;
+battletag.tagChanged = true;
+battletag.tagField = 'profile-edit-clantag[' + battletag.personaId + '_1_2048]';
+battletag.tagLoading = true;
+battletag.tagUrl = (
+    '/bf4/user/overviewBoxStats/' + 
+    S.globalContext.staticContext.activePersona.userId
+);
+battletag.type = false;
+
+battletag.go = function() {
+    battletag.button.click();
+    var data = {
+        'tab': 'edit-soldiers',
+        'profile-edit-personaId[]': battletag.personaId
+    };
+    data[battletag.tagField] = battletag.selectInput.val();
+    $.post('/bf4/profile/update/', data);
+    battletag.hide(true);
+    if (data[battletag.tagField] != battletag.tag) {
+        battletag.tag = data[battletag.tagField];
+        battletag.tagChanged = true;
+    }
+
+    return false;
+};
+
+battletag.selectInput = $('<input>', {
+        'type': 'text',
+        'maxlength': 4,
+        'placeholder': 'CUSTOM TAG'
+    }).keypress(function(e) {
+        if (!e.which || 8 == e.which) {
+            return true;
+        }
+        else if (13 == e.which) {
+            battletag.go();
+        }
+
+        return /[A-Za-z0-9]/.test(String.fromCharCode(e.which));
+    });
+
 battletag.popovers = {
     'loading': $('<div>', {
             'class': 'battletag-popover battletag-loading'
@@ -13,46 +69,45 @@ battletag.popovers = {
             'class': 'battletag-popover battletag-preview'
         }).disableSelection(),
 
-    'nopreview': $('<div>', {
-            'class': 'battletag-popover battletag-preview',
-            'text': '[N/A]'
-        }).disableSelection(),
-
     'select': $('<div>', {
             'class': 'battletag-popover battletag-select'
-        }).disableSelection(),
-
-    'noselect': $('<div>', {
-            'class': 'battletag-popover battletag-select'
         }).append(
-            $('<a>', {
-                'href': '/bf4/platoons/',
-                'target': '_blank',
-                'text': 'NO PLATOONS'
-            })
-        ).disableSelection()
+            $('<table>').append(
+                $('<tr>').append(
+                    $('<td>').append(
+                        battletag.selectInput
+                    )
+                ).append(
+                    $('<td>').append(
+                        $('<a>', {
+                            'href': 'javascript:;',
+                            'text': 'go'
+                        })
+                    ).click(battletag.go)
+                ).append(
+                    $('<td>').append(
+                        $('<a>', {
+                            'href': 'javascript:;',
+                            'text': '↻'
+                        })
+                    ).click(function(e) {
+                        battletag.clubsLoading = true;
+                        battletag.tagLoading = true;
+                        battletag.show();
+                        battletag.load();
+                    })
+                )
+            )
+        )
 };
-
-battletag.roots = {
-    'main': '#base-container',
-    'header': '.dropdown-content[data-for=multiplayer]',
-    'friends': '#comcenter-friends',
-    'chats': '#comcenter-chats'
-};
-
-battletag.club = null;
-battletag.clubChanged = true;
-battletag.clubs = {};
-battletag.clubsChanged = true;
-battletag.clubsJSON = null;
-battletag.loading = true;
-battletag.type = false;
 
 battletag.load = function() {
     $.ajax({
         url: '/bf4/platoons/',
         headers: { 'X-AjaxNavigation': 1 },
+        error: battletag.retry,
         success: function(data) {
+            battletag.clubsLoading = false;
             var tmpClubsJSON = JSON.stringify(data.context.myclubs);
             if (tmpClubsJSON != battletag.clubsJSON) {
                 battletag.clubs = data.context.myclubs;
@@ -60,21 +115,46 @@ battletag.load = function() {
                 battletag.clubsChanged = true;
             }
 
-            if (data.context.activeClubId != battletag.clubs) {
-                battletag.club = data.context.activeClubId;
-                battletag.clubChanged = true;
+            if (data.context.activeClubId != battletag.clubsActive) {
+                battletag.clubsActive = data.context.activeClubId;
+                battletag.clubsChanged = true;
             }
 
-            if (battletag.loading) {
-                battletag.loading = false;
-                battletag.show();
+            battletag.show();
+        }
+    });
+    $.ajax({
+        url: battletag.tagUrl,
+        error: battletag.retry,
+        success: function(data) {
+            battletag.tagLoading = false;
+            var tmpTag = '';
+            for (var i = 0; i < data.data.soldiersBox.length; ++i) {
+                if (2048 == data.data.soldiersBox[i].game) {
+                    tmpTag = data.data.soldiersBox[i].persona.clanTag;
+                    break;
+                }
             }
+
+            if (tmpTag != battletag.tag) {
+                battletag.tag = tmpTag;
+                battletag.tagChanged = true;
+            }
+
+            battletag.show();
         }
     });
 };
 
+battletag.retry = function(jqXHR, textStatus, errorThrown) {
+    window.setTimeout(function(data) {
+            $.ajax(data);
+        }, battletag.retryTime, this);
+    console.error('BATTLETAG: failed to load ' + this.url);
+};
+
 battletag.show = function(type, e) {
-    if (type) {
+    if (type && e) {
         battletag.type = type;
         battletag.data = e.data;
         battletag.button = $(e.target).closest(
@@ -92,56 +172,49 @@ battletag.show = function(type, e) {
     var button = battletag.button;
     var data = battletag.data;
     var popover = null;
-
-    if (battletag.loading) {
+    if (battletag.clubsLoading || battletag.tagLoading) {
         popover = battletag.popovers.loading;
+        if (popover.is(':visible')) {
+            return;
+        }
     }
     else if (battletag.type == 'preview') {
-        if (Object.keys(battletag.clubs).length) {
-            popover = battletag.popovers.preview;
-            if (battletag.clubChanged) {
-                battletag.clubChanged = false;
-                popover.empty().append(
-                    '[' + battletag.clubs[battletag.club].tag + ']'
-                );
-            }
-        }
-        else {
-            popover = battletag.popovers.nopreview;
+        popover = battletag.popovers.preview;
+        if (battletag.tagChanged) {
+            battletag.tagChanged = false;
+            popover.empty().append(
+                '[' + (battletag.tag.length ? battletag.tag : ' _ ') + ']'
+            );
         }
     }
     else {
-        if (Object.keys(battletag.clubs).length) {
-            popover = battletag.popovers.select;
-            if (battletag.clubsChanged) {
-                battletag.clubsChanged = false;
-                popover.empty();
-                for (var club in battletag.clubs) {
-                    popover.append(
-                        $('<a>', {
-                            'href': 'javascript:;',
-                            'battletag-id': club
-                        }).append(
-                            $('<div>').append(
-                                $('<div>')
-                            ).append(
-                                $('<div>')
-                            ).append(
-                                $('<div>')
-                            )
-                        ).append(
-                            $('<font>', {
-                                'text': '[' + battletag.clubs[club].tag + ']'
-                            })
-                        ).append(
-                            battletag.clubs[club].name
-                        )
+        popover = battletag.popovers.select;
+        battletag.selectInput.val('');
+        if (battletag.clubsChanged) {
+            battletag.clubsChanged = false;
+            popover.children('a').remove();
+            for (var club in battletag.clubs) {
+                var tmp = $('<a>', {
+                        'href': 'javascript:;',
+                        'battletag-id': club
+                    }).append(
+                        $('<font>', {
+                            'text': '[' + battletag.clubs[club].tag + ']'
+                        })
+                    ).append(
+                        battletag.clubs[club].name
+                    );
+                if (club == battletag.clubsActive) {
+                    tmp.append(
+                        $('<font>', {
+                            'class': 'battletag-active',
+                            'text': 'ACTIVE'
+                        })
                     );
                 }
+
+                popover.append(tmp.disableSelection());
             }
-        }
-        else {
-            popover = battletag.popovers.noselect;
         }
     }
 
@@ -154,7 +227,7 @@ battletag.show = function(type, e) {
             return;
         }
 
-        position = tmpParent.position();
+        var position = tmpParent.position();
         top += position.top + parseInt(tmpParent.css('margin-top'));
         left += position.left + parseInt(tmpParent.css('margin-left'));
         tmpParent = tmpParent.offsetParent();
@@ -169,12 +242,14 @@ battletag.show = function(type, e) {
     battletag.hide();
     popover.removeAttr('style').css({
         'top': top + 'px',
-        'border-color': (button.is('.btn-primary, .join-friend-submit-link') ? 
-                '#F90' : '#D5DDE5'
+        'border-color': (
+                button.is('.btn-primary, .join-friend-submit-link') ? 
+                    '#F90' : '#D5DDE5'
             )
     }).css(
-        (data.right ? 'right' : 'left'), (data.right ?
-                tmproot.outerWidth() - left - button.outerWidth() : left
+        (data.right ? 'right' : 'left'), (
+                data.right ?
+                    tmproot.outerWidth() - left - button.outerWidth() : left
             ) + 'px'
     ).show(0);
 };
@@ -190,17 +265,23 @@ battletag.select = function(e) {
 };
 
 battletag.hide = function(e) {
+    if (
+        e &&
+        !battletag.popovers.select.is(':visible') &&
+        !battletag.clubsLoading &&
+        !battletag.tagLoading
+    ) {
+        battletag.type = false;
+    }
+
     battletag.popovers.loading.hide();
     battletag.popovers.preview.hide();
-    battletag.popovers.nopreview.hide();
     if (!e || 'preview' != e.data) {
         battletag.popovers.select.hide();
-        battletag.popovers.noselect.hide();
     }
 };
 
 battletag.load();
-setInterval(battletag.load, 5000);
 
 [
     ['#recommended-server .btn'],
@@ -239,37 +320,53 @@ $(document).on('click.battletag', function(e) {
     }
 
     var tmptarget = $(e.target);
+    if (!tmptarget.closest('.battletag-select').length) {
+        battletag.hide(true);
+        return true;
+    }
+
     if (!tmptarget.is('a[battletag-id]')) {
-        battletag.hide();
         return true;
     }
 
     battletag.button.click();
+    var clubId = tmptarget.attr('battletag-id');
     $.ajax({
-        url: '/bf4/platoons/setActive/' + tmptarget.attr('battletag-id'),
+        url: '/bf4/platoons/setActive/' + clubId,
         complete: function(data, status) {
             if (status != 'success') {
                 console.log('BATTLETAG: ' + status);
             }
         }
     });
-    battletag.hide();
+    battletag.hide(true);
+    if (clubId != battletag.clubsActive) {
+        battletag.clubsActive = clubId;
+        battletag.clubsChanged = true;
+    }
+
+    var tmpTag = battletag.clubs[clubId].tag;
+    if (tmpTag != battletag.tag) {
+        battletag.tag = tmpTag;
+        battletag.tagChanged = true;
+    }
+
     return false;
 });
 
 Push.bind("UserPresenceChanged", function(e) {
-    if (battletag.roots['friends'] == battletag.data.root) {
-        battletag.hide();
+    if (battletag.data && battletag.roots['friends'] == battletag.data.root) {
+        battletag.hide(true);
     }
 });
 
 battletag.openChat = comcenter.openChat;
 comcenter.openChat = function(chatId) {
-    battletag.hide();
+    battletag.hide(true);
     battletag.openChat(chatId);
 };
 
 $(battletag.roots['header']).on('mouseleave.battletag', function(e) {
     $('.game-bar .dropdown-bar').css('overflow', '');
-    battletag.hide();
+    battletag.hide(true);
 });
