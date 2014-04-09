@@ -162,10 +162,7 @@ battletag.show = function(type, e) {
         );
         battletag.button.attr('style', 'outline: none !important');
     }
-    else if (battletag.type) {
-        type = battletag.type;
-    }
-    else {
+    else if (!battletag.type) {
         return;
     }
 
@@ -252,6 +249,10 @@ battletag.show = function(type, e) {
                     tmproot.outerWidth() - left - button.outerWidth() : left
             ) + 'px'
     ).show(0);
+
+    if (battletag.type == 'select') {
+        battletag.selectInput.focus();
+    }
 };
 
 battletag.preview = function(e) {
