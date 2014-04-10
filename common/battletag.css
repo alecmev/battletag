@@ -42,7 +42,7 @@
 }
 
 .battletag-select a:hover {
-    background-color: #21252B;
+    background: #21252B;
 }
 
 .battletag-select table {
@@ -87,7 +87,7 @@
 
 .battletag-select a,
 .battletag-select input {
-    background-color: #0A0E14;
+    background: #0A0E14;
     outline: none;
 }
 

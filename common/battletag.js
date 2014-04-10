@@ -12,29 +12,38 @@ battletag.clubsActive = null;
 battletag.clubsChanged = true;
 battletag.clubsJSON = null;
 battletag.clubsLoading = true;
-battletag.personaId = S.globalContext.staticContext.activePersona.personaId;
+battletag.picture = '';
 battletag.retryTime = 5000;
-battletag.tag = null;
+battletag.tag = '';
 battletag.tagChanged = true;
-battletag.tagField = 'profile-edit-clantag[' + battletag.personaId + '_1_2048]';
 battletag.tagLoading = true;
-battletag.tagUrl = (
-    '/bf4/user/overviewBoxStats/' + 
-    S.globalContext.staticContext.activePersona.userId
-);
 battletag.type = false;
+
+battletag.activePersona = S.globalContext.staticContext.activePersona;
+battletag.editKey = '[' +
+    battletag.activePersona.personaId + '_' +
+    battletag.activePersona.platform + '_' +
+    battletag.activePersona.game +
+']';
+battletag.editTag = 'profile-edit-clantag' + battletag.editKey;
+battletag.editPicture = 'profile-edit-picture' + battletag.editKey;
+battletag.tagUrl = (
+    '/bf4/user/overviewBoxStats/' + battletag.activePersona.userId
+);
 
 battletag.go = function() {
     battletag.button.click();
     var data = {
         'tab': 'edit-soldiers',
-        'profile-edit-personaId[]': battletag.personaId
+        'profile-edit-personaId[]': battletag.activePersona.personaId
     };
-    data[battletag.tagField] = battletag.selectInput.val();
+    var tmptag = battletag.selectInput.val();
+    data[battletag.editTag] = tmptag;
+    data[battletag.editPicture] = battletag.picture;
     $.post('/bf4/profile/update/', data);
     battletag.hide(true);
-    if (data[battletag.tagField] != battletag.tag) {
-        battletag.tag = data[battletag.tagField];
+    if (tmptag != battletag.tag) {
+        battletag.tag = tmptag;
         battletag.tagChanged = true;
     }
 
@@ -128,16 +137,19 @@ battletag.load = function() {
         error: battletag.retry,
         success: function(data) {
             battletag.tagLoading = false;
-            var tmpTag = '';
+            var tmptag = ''
+              , tmpdata;
             for (var i = 0; i < data.data.soldiersBox.length; ++i) {
-                if (2048 == data.data.soldiersBox[i].game) {
-                    tmpTag = data.data.soldiersBox[i].persona.clanTag;
+                tmpdata = data.data.soldiersBox[i];
+                if (battletag.activePersona.game == tmpdata.game) {
+                    tmptag = tmpdata.persona.clanTag;
+                    battletag.picture = tmpdata.persona.picture;
                     break;
                 }
             }
 
-            if (tmpTag != battletag.tag) {
-                battletag.tag = tmpTag;
+            if (tmptag != battletag.tag) {
+                battletag.tag = tmptag;
                 battletag.tagChanged = true;
             }
 
