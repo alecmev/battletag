@@ -30,7 +30,7 @@ with open('chrome/manifest.json', 'r') as tmpIn:
 with open('firefox/package.json', 'r') as tmpIn:
     tmpJson = json.load(tmpIn)
     tmpJson['fullName'] = common['name']
-    tmpJson['name'] = common['short_name'].lower()
+    tmpJson['name'] = common['short_name'].replace(' ', '-').lower()
     tmpJson['description'] = common['description']
     tmpJson['version'] = common['version']
     with open(btf + '/package.json', 'w') as tmpOut:
